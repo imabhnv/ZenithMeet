@@ -166,15 +166,15 @@ if st.session_state.get("logged_in", False):
 
     st.markdown("### 🗨️ Group Chat History")
     history = get_chat_history()
-for row in history:
-    try:
-        dt = datetime.strptime(row['timestamp'], "%Y-%m-%d %H:%M:%S")
-        dt_ist = dt.strftime("%Y-%m-%d %I:%M %p") + " IST"  # 👈 No timezone shift here
-    except:
-        dt_ist = row['timestamp']  # fallback if parsing fails
-
-    with st.chat_message("user"):
-        st.markdown(f"**{row['name']}**: {row['message']}\n\n🕒 *{dt_ist}*")
+    for row in history:
+        try:
+            dt = datetime.strptime(row['timestamp'], "%Y-%m-%d %H:%M:%S")
+            dt_ist = dt.strftime("%Y-%m-%d %I:%M %p") + " IST"  # 👈 No timezone shift here
+        except:
+            dt_ist = row['timestamp']  # fallback if parsing fails
+    
+        with st.chat_message("user"):
+            st.markdown(f"**{row['name']}**: {row['message']}\n\n🕒 *{dt_ist}*")
 
 
     message = st.chat_input("Type your message here...")
