@@ -1,4 +1,4 @@
-# 🤖 ZenithMeet – AI-Powered Smart Meeting Scheduler
+# 🤖 ZenithMeet : AI-Powered Smart Meeting Scheduler
 
 A smart group meeting scheduler that analyze natural language chats and automatically schedules meetings based on **time**, **venue**, and **participants**. It also sends **email confirmations** to all attendees using.
 
