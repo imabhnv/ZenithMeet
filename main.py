@@ -1,4 +1,7 @@
 # import streamlit as st
+# from datetime import datetime
+# from pytz import timezone
+
 # from backend.chat_handler import (
 #     add_user, get_all_users, save_message,
 #     get_chat_history, save_meeting_to_db,
@@ -8,8 +11,10 @@
 # from backend.meeting_logic import try_schedule_meeting
 # from backend.emailer import send_confirmation_email
 
-# st.set_page_config(page_title="🤖 AI Meeting Scheduler", layout="centered")
-# st.title("🧠  ZenithMeet : AI-Powered Smart Meeting Scheduler")
+# IST = timezone("Asia/Kolkata")
+
+# st.set_page_config(page_title="📱AI Meeting Scheduler", layout="centered")
+# st.title("🕑ZenithMeet : AI-Powered Smart Meeting Scheduler")
 # st.subheader("Chat-based group meeting scheduler")
 
 # st.sidebar.title("👤 Register")
@@ -60,8 +65,15 @@
 #     st.markdown("### 🗨️ Group Chat History")
 #     history = get_chat_history()
 #     for row in history:
+#         try:
+#             dt = datetime.strptime(row['timestamp'], "%Y-%m-%d %H:%M:%S")
+#             dt_ist = dt.strftime("%Y-%m-%d %I:%M %p") + " IST" 
+#         except:
+#             dt_ist = row['timestamp']  
+    
 #         with st.chat_message("user"):
-#             st.markdown(f"**{row['name']}**: {row['message']}\n\n🕒 *{row['timestamp']}*")
+#             st.markdown(f"**{row['name']}**: {row['message']}\n\n🕒 *{dt_ist}*")
+
 
 #     message = st.chat_input("Type your message here...")
 #     if message:
@@ -73,7 +85,7 @@
 
 #     with col1:
 #         if st.button("📅 Schedule Meeting"):
-#             with st.spinner("🔍 Analyzing with Gemini..."):
+#             with st.spinner("🔍 Analyzing ..."):
 #                 success, msg, data = try_schedule_meeting()
 
 #             if not success:
@@ -169,13 +181,11 @@ if st.session_state.get("logged_in", False):
     for row in history:
         try:
             dt = datetime.strptime(row['timestamp'], "%Y-%m-%d %H:%M:%S")
-            dt_ist = dt.strftime("%Y-%m-%d %I:%M %p") + " IST"  # 👈 No timezone shift here
+            dt_ist = IST.localize(dt).strftime("%Y-%m-%d %I:%M %p") + " IST"
         except:
-            dt_ist = row['timestamp']  # fallback if parsing fails
-    
+            dt_ist = row['timestamp']
         with st.chat_message("user"):
             st.markdown(f"**{row['name']}**: {row['message']}\n\n🕒 *{dt_ist}*")
-
 
     message = st.chat_input("Type your message here...")
     if message:
@@ -187,22 +197,26 @@ if st.session_state.get("logged_in", False):
 
     with col1:
         if st.button("📅 Schedule Meeting"):
-            with st.spinner("🔍 Analyzing with Gemini..."):
-                success, msg, data = try_schedule_meeting()
-
-            if not success:
-                st.error(msg)
+            history = get_chat_history()
+            if not history:
+                st.warning("⚠️ Chat is empty. Please start a conversation to schedule a meeting.")
             else:
-                save_meeting_to_db(data["participants"], data["time"], data["place"], user_email)
-                email_status = send_confirmation_email(data["participants"], data["time"], data["place"])
-                names = [get_user_name_by_email(p) or p.split("@")[0] for p in data["participants"]]
-                st.success("✅ Meeting Scheduled!")
-                st.markdown(f"""
+                with st.spinner("🔍 Analyzing ..."):
+                    success, msg, data = try_schedule_meeting()
+
+                if not success:
+                    st.error(msg)
+                else:
+                    save_meeting_to_db(data["participants"], data["time"], data["place"], user_email)
+                    email_status = send_confirmation_email(data["participants"], data["time"], data["place"])
+                    names = [get_user_name_by_email(p) or p.split("@")[0] for p in data["participants"]]
+                    st.success("✅ Meeting Scheduled!")
+                    st.markdown(f"""
 **📅 Date & Time:** {data["time"]} IST  
 **📍 Venue:** {data["place"]}  
 **👥 Participants:** {', '.join(names)}
 """)
-                st.success("📧 Email confirmation sent." if email_status else "❌ Failed to send email.")
+                    st.success("📧 Email confirmation sent." if email_status else "❌ Failed to send email.")
 
     with col2:
         if st.button("🗑️ Clear Chat History"):
@@ -211,3 +225,15 @@ if st.session_state.get("logged_in", False):
             st.rerun()
 else:
     st.warning("Please register and select your user to start chatting and scheduling.")
+
+
+
+
+
+
+
+
+
+
+
+
