@@ -1,6 +1,7 @@
 import sqlite3
 from datetime import datetime
 from pathlib import Path
+from pytz import timezone
 
 DATA_DIR = Path("data")
 DATA_DIR.mkdir(exist_ok=True)
@@ -78,13 +79,24 @@ def get_email_by_name(name):
     conn.close()
     return result["email"] if result else None
 
+# def save_message(user_id, message):
+#     conn = get_connection()
+#     cursor = conn.cursor()
+#     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+#     cursor.execute("INSERT INTO messages (user_id, message, timestamp) VALUES (?, ?, ?)",
+#                    (user_id, message, timestamp))
+#     conn.commit()
+
 def save_message(user_id, message):
+    from datetime import datetime
+    IST = timezone("Asia/Kolkata")
+    timestamp = datetime.now(IST).strftime("%Y-%m-%d %H:%M:%S")  # 👈 Proper IST
     conn = get_connection()
     cursor = conn.cursor()
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     cursor.execute("INSERT INTO messages (user_id, message, timestamp) VALUES (?, ?, ?)",
                    (user_id, message, timestamp))
     conn.commit()
+    conn.close()
 
 def get_chat_history():
     conn = get_connection()
