@@ -17,11 +17,10 @@ A smart group meeting scheduler that analyze natural language chats and automati
 
 ```
 ├── backend/
-│   ├── chat_handler.py       # Handles DB operations (users, messages, meetings)
+│   ├── chat_handler.py       # Handles DB operations (initialize db, users, messages, meetings)
 │   ├── gemini_agent.py       # Uses Gemini to extract meeting info from chat
 │   ├── meeting_logic.py      # Central logic to parse, validate, and schedule meeting
 │   ├── emailer.py            # Sends email to participants
-│   └── db.py                 # Initializes the database (SQLite)
 │
 ├── data/
 │   └── chat.db               # SQLite DB file
