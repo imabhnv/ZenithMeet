@@ -113,8 +113,8 @@ from backend.emailer import send_confirmation_email
 
 IST = timezone("Asia/Kolkata")
 
-st.set_page_config(page_title="🤖 AI Meeting Scheduler", layout="centered")
-st.title("🧠  ZenithMeet : AI-Powered Smart Meeting Scheduler")
+st.set_page_config(page_title="AI Meeting Scheduler", layout="centered")
+st.title("🕑ZenithMeet : AI-Powered Smart Meeting Scheduler")
 st.subheader("Chat-based group meeting scheduler")
 
 # ---------------- Sidebar -----------------
